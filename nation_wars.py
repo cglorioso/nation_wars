@@ -10,8 +10,6 @@ br.open("http://nation-wars.com")
 br.select_form(nr=0)
 br.form['username'] = raw_input("Enter username: ")
 br.form['password'] = raw_input("Enter password: ")
-# br.form['username'] = '-Chris-'
-# br.form['password'] = 'owned'
 br.submit()
 
 ##global events##
