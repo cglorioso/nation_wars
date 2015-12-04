@@ -1,5 +1,6 @@
 import mechanize, re
 from bs4 import BeautifulSoup
+from collections import OrderedDict
 
 br = mechanize.Browser()
 br.set_handle_robots(False)
@@ -47,5 +48,5 @@ for tr in trs:
         
 
 
-for state, count in defender_dict.items():
+for state, count in OrderedDict(sorted(defender_dict.items(), key=lambda x: x[1])).items():
     print state, count
