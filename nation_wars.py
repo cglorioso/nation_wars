@@ -19,13 +19,13 @@ soup = BeautifulSoup(data, 'html.parser')
 table = soup.find_all("table", {"width" : "95%"})
 event_table = table[0]
 trs = event_table.find_all('tr')
-type =[]
+attack_type =[]
 attackers = []
 defenders = []
 for tr in trs[1:]:
     cells = tr.find_all('td')
     if len(cells) == 5:
-        type.append(cells[0].get_text())
+        attack_type.append(cells[0].get_text())
         attackers.append(cells[1].get_text())
         defenders.append(cells[2].get_text())       
         
