@@ -22,8 +22,8 @@ br.addheaders = [('User-agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/
 ##log in##
 br.open("http://nation-wars.com")
 br.select_form(nr=0)
-br.form['username'] = raw_input("Enter Username: ")
-br.form['password'] = raw_input("Enter Password: ")
+br.form['username'] = "Derek"
+br.form['password'] = "bball234"
 br.submit()
 statenum = raw_input("Enter State #: ")
 grabamount = int(raw_input("Enter Smallest Grab: "))
@@ -60,6 +60,17 @@ states_list = []
 trs = state_table.find_all('tr')
 c = 0
 nation = ""
+
+for tr in trs:
+    if nation == "":
+        cells = tr.find_all('td')
+        if len(cells) == 7:
+            tempstate = cells[2].get_text() + cells[3].get_text()
+            tempnation = tempstate[tempstate.find("[") + 1:tempstate.find("]")]
+            tempnum = tempstate[tempstate.find("#") + 1:tempstate.find(")")]
+            if statenum == tempnum:
+                nation = tempnation
+
 for tr in trs:
     if c == 1:
         cells = tr.find_all('td')
@@ -70,7 +81,6 @@ for tr in trs:
             x.land = cells[4].get_text()
             if statenum == x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
                 stateland = float(x.land.replace(".",""))
-                nation = tempnation
             x.networth = cells[5].get_text()
             if defender_dict.has_key(x.statenation) is False:
                 x.attacks = 0
@@ -78,7 +88,7 @@ for tr in trs:
                 for i in defenders:
                     if i == x.statenation:
                         x.attacks = defenders.count(i)
-            for d in range(0, 35 - len(x.statenation)):
+            for d in range(0, 34 - len(x.statenation)):
                 x.space += " "
         if statenum != x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")] and tempnation != nation:
             states_list.append(x)
@@ -103,11 +113,11 @@ for st in states_list:
 
 up_states_list.sort(reverse=True, key=lambda x: x.estgrab) 
 print " "
-print "      State                      Attacks   Land      Networth    Estimated Grab"
+print "          State                  Attacks   Land     Networth    Estimated Grab"
 print " "
 for s in up_states_list:
     if s.estgrab > grabamount:
-        print s.statenation, s.space, s.attacks ,"  ", s.land.replace(".",",") , "   " + s.networth.replace(".",",") + "   " + str(s.estgrab)
+        print s.statenation, s.space, s.attacks ,"    ", s.land.replace(".",",") , "   " + s.networth.replace(".",",") + "   " + str(s.estgrab)
         print " "
 
 raw_input()
