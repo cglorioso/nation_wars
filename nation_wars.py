@@ -1,16 +1,18 @@
 ﻿import mechanize
+import math
 import re
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 
 class State(object):
  
-    def __init__(self, statenation, attacks, space, networth, land):
+    def __init__(self, statenation, attacks, space, networth, land, estgrab):
         self.statenation = statenation
         self.attacks = attacks
         self.space = space
         self.networth = networth
         self.land = land
+        self.estgrab = estgrab
 
 	
 br = mechanize.Browser()
@@ -23,7 +25,8 @@ br.select_form(nr=0)
 br.form['username'] = raw_input("Enter username: ")
 br.form['password'] = raw_input("Enter password: ")
 br.submit()
-
+statenum = raw_input("Enter State #: ")
+grabamount = int(raw_input("Enter Smallest Grab: "))
 ##global events##
 events = br.open('http://game.nation-wars.com/events.php?action=search&search%5Btimefrom%5D=36&search%5Btimeto%5D=0&search%5Bstateids%5D=&search%5Btags%5D=&search%5Battacktype%5D=1&search%5Bdisplaylimit%5D=800')
 data = events.read()
@@ -52,24 +55,47 @@ table = soup.find_all("table", {"width" : "100%"})
 state_table = table[6]
 states_list = []
 trs = state_table.find_all('tr')
+c = 0
 for tr in trs:
-    cells = tr.find_all('td')
-    if len(cells) == 7:
-        x = State("","","","","")
-        x.statenation = cells[2].get_text() + cells[3].get_text()
-        x.land = cells[4].get_text()
-        x.networth = cells[5].get_text()
-        if defender_dict.has_key(x.statenation) is False:
-            x.attacks = 0
+    if c == 1:
+        cells = tr.find_all('td')
+        if len(cells) == 7:
+            x = State("state", "attacks", "", "land", "networth", "estgrab")
+            x.statenation = cells[2].get_text() + cells[3].get_text()
+            x.land = cells[4].get_text()
+            if statenum == x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
+                stateland = float(x.land.replace(".",""))
+            x.networth = cells[5].get_text()
+            if defender_dict.has_key(x.statenation) is False:
+                x.attacks = 0
+            else:
+                for i in defenders:
+                    if i == x.statenation:
+                        x.attacks = defenders.count(i)
+            for d in range(0, 35 - len(x.statenation)):
+                x.space += " "
+        if statenum != x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
+            states_list.append(x)
+    c = 1
+
+up_states_list = []
+for s in states_list:
+    land = float(s.land.replace(".",""))
+    attacks = float(s.attacks)
+    if statenum != x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
+        if s.attacks != 0:
+            s.estgrab = (land/stateland)*(land*.13)*(math.pow(.67,attacks))
+            states_list.count(s) + 1
         else:
-            for i in defenders:
-                if i == x.statenation:
-                    x.attacks = defenders.count(i)
-        for d in range(0, 35 - len(x.statenation)):
-            x.space += " "
-    states_list.append(x)
-            
-                
-states_list.sort(key=lambda x: x.attacks)
+            s.estgrab = (land/stateland)*(land*.13)
+            states_list.count(s) + 1
+    
 for st in states_list:
-    print st.statenation, st.space, st.attacks ,"  ", st.land , "   " + st.networth
+    if states_list.count(st) == 1:
+        up_states_list.append(st)
+
+
+up_states_list.sort(reverse=True, key=lambda x: x.estgrab) 
+for s in up_states_list:
+    if s.estgrab > grabamount:
+        print s.statenation, s.space, s.attacks ,"  ", s.land.replace(".",",") , "   " + s.networth.replace(".",",") + "   " + str(s.estgrab)
