@@ -37,13 +37,16 @@ trs = event_table.find_all('tr')
 attack_type = []
 attackers = []
 defenders = []
-
+attack_status = ""
 for tr in trs[1:]:
     cells = tr.find_all('td')
     if len(cells) == 5:
         attack_type.append(cells[0].get_text())
         attackers.append(cells[1].get_text())
-        defenders.append(cells[2].get_text())       
+        attack_status = cells[3].get_text()
+        attack_status = attack_status[0:6]
+        if attack_status != "Defeat":
+            defenders.append(cells[2].get_text())       
         
 defender_dict = {i:defenders.count(i) for i in defenders}
 
@@ -99,12 +102,6 @@ for st in states_list:
 
 
 up_states_list.sort(reverse=True, key=lambda x: x.estgrab) 
-print " "
-print "      State                      Attacks   Land      Networth    Estimated Grab"
-print " "
 for s in up_states_list:
     if s.estgrab > grabamount:
         print s.statenation, s.space, s.attacks ,"  ", s.land.replace(".",",") , "   " + s.networth.replace(".",",") + "   " + str(s.estgrab)
-        print " "
-
-raw_input()
