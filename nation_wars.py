@@ -14,7 +14,16 @@ class State(object):
         self.land = land
         self.estgrab = estgrab
 
-	
+
+def blankString(value, length):
+    string = ""
+    for d in range(0, length - len(value)):
+        string += " "
+    num = value.find("[")
+    if value.find("[")  == -1:
+        string += " "
+    return string
+
 br = mechanize.Browser()
 br.set_handle_robots(False)
 br.addheaders = [('User-agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36')]
@@ -46,7 +55,9 @@ for tr in trs[1:]:
         attack_status = cells[3].get_text()
         attack_status = attack_status[0:6]
         if attack_status != "Defeat":
-            defenders.append(cells[2].get_text())              
+            tempnum = cells[2].get_text()
+            tempnum = tempnum[tempnum.find("#") + 1:tempnum.find(")")]
+            defenders.append(tempnum)
         
 defender_dict = {i:defenders.count(i) for i in defenders}
 
@@ -82,14 +93,12 @@ for tr in trs:
             if statenum == x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
                 stateland = float(x.land.replace(".",""))
             x.networth = cells[5].get_text()
-            if defender_dict.has_key(x.statenation) is False:
+            if defender_dict.has_key(x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]) is False:
                 x.attacks = 0
             else:
                 for i in defenders:
-                    if i == x.statenation:
+                    if i == x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
                         x.attacks = defenders.count(i)
-            for d in range(0, 34 - len(x.statenation)):
-                x.space += " "
         if statenum != x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")] and tempnation != nation:
             states_list.append(x)
     c = 1
@@ -100,7 +109,7 @@ for s in states_list:
     attacks = float(s.attacks)
     if statenum != x.statenation[x.statenation.find("#") + 1:x.statenation.find(")")]:
         if s.attacks != 0:
-            s.estgrab = (land/stateland)*(land*.13)*(math.pow(.67,attacks))
+            s.estgrab = (land/stateland)*(land*.13)*(math.pow(.7,attacks))
             states_list.count(s) + 1
         else:
             s.estgrab = (land/stateland)*(land*.13)
@@ -113,11 +122,11 @@ for st in states_list:
 
 up_states_list.sort(reverse=True, key=lambda x: x.estgrab) 
 print " "
-print "          State                  Attacks   Land     Networth    Estimated Grab"
+print "          State                 Attacks   Land      Networth         Grab"
 print " "
 for s in up_states_list:
     if s.estgrab > grabamount:
-        print s.statenation, s.space, s.attacks ,"    ", s.land.replace(".",",") , "   " + s.networth.replace(".",",") + "   " + str(s.estgrab)
+        print s.statenation, blankString(s.statenation, 33), s.attacks , blankString(str(s.attacks), 3), s.land.replace(".",",") , blankString(s.land, 7), s.networth.replace(".",",") , blankString(s.networth, 15), str(int(s.estgrab))
         print " "
 
 raw_input()
