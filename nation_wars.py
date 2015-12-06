@@ -31,8 +31,8 @@ br.addheaders = [('User-agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/
 ##log in##
 br.open("http://nation-wars.com")
 br.select_form(nr=0)
-br.form['username'] = "Derek"
-br.form['password'] = "bball234"
+br.form['username'] = raw_input("Enter Username: ")
+br.form['password'] = raw_input("Enter Password: ")
 br.submit()
 statenum = raw_input("Enter State #: ")
 grabamount = int(raw_input("Enter Smallest Grab: "))
