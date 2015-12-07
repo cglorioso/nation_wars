@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 locale.setlocale( locale.LC_ALL, '' )
 
+## email information ##
 username = "username"
 password = "password"
 fromaddr = "your@email.com"
@@ -47,8 +48,10 @@ while True:
         if skipRow == 1:
             if len(cells) == 6:
                 unitType = cells[0].get_text()
-                unitQuantity = int(cells[1].get_text().replace(".",","))
-                unitPrice = int(cells[2].get_text().replace(".",",").replace("$",""))
+                unitQuantity = int(cells[1].get_text().replace(".",""))
+                unitPrice = int(cells[2].get_text().replace(".","").replace("$",""))
+				
+				## Which units you want to buy ##
                 if unitType == "Ships":
                     moneyNeeded = unitQuantity * unitPrice
                     bank = br.open('http://game.nation-wars.com/bank.php')
