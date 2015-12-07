@@ -22,7 +22,7 @@ br.select_form(nr=0)
 br.form['username'] = raw_input("Enter Username: ")
 br.form['password'] = raw_input("Enter Password: ")
 br.submit()
-
+print "Logged In"
 while True:
     ##public market##
     market = br.open('http://game.nation-wars.com/publicmarketbuy.php')
