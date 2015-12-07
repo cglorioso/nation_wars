@@ -6,11 +6,12 @@ import smtplib
 import locale
 from bs4 import BeautifulSoup
 
-## email information ##
-username = 'username'
-password = 'password'
-fromaddr = 'your@emailadress'
-toaddrs  = 'destination@emailaddress'
+locale.setlocale( locale.LC_ALL, '' )
+
+username = "username"
+password = "password"
+fromaddr = "your@email.com"
+toaddrs  = "destination@email.com"
 
 br = mechanize.Browser()
 br.set_handle_robots(False)
@@ -46,10 +47,10 @@ while True:
         if skipRow == 1:
             if len(cells) == 6:
                 unitType = cells[0].get_text()
-                unitQuantity = cells[1].get_text().replace(".",",")
-                unitPrice = cells[2].get_text().replace(".",",")
+                unitQuantity = int(cells[1].get_text().replace(".",","))
+                unitPrice = int(cells[2].get_text().replace(".",",").replace("$",""))
                 if unitType == "Ships":
-                    moneyNeeded = int(unitQuantity.replace(",","")) * int(unitPrice.replace("$","").replace(",",""))
+                    moneyNeeded = unitQuantity * unitPrice
                     bank = br.open('http://game.nation-wars.com/bank.php')
                     bank_data = bank.read()
                     bank_soup = BeautifulSoup(bank_data, 'html.parser')
@@ -60,24 +61,25 @@ while True:
                     for trow in trows:
                         cells = trow.find_all('td')
                         if bankRow == 1:
-                            bankAmount = cells[1].get_text().replace(".",",")
+                            bankAmount = int(cells[1].get_text().replace("$","").replace(".",""))
                         bankRow += 1
                     if moneyNeeded < bankAmount:
                         br.select_form(nr=0)
                         br.form['withdrawalAmount'] = str(moneyNeeded)
                         br.submit()
                         print "Withdrew", moneyNeeded, "for", unitType
+
                         br.open('http://game.nation-wars.com/publicmarketbuy.php')
                         br.select_form(nr=row)
                         br.form['purchaseAmount'] = str(unitQuantity)
                         br.submit()
                         print "Purchased" , unitQuantity, unitType, "at", unitPrice, "costing", moneyNeeded
-                        moneyLeft = locale.currency(bankAmount - moneyNeeded, grouping=True)
-                        msg = ('Purchased ' + locale.format("%d", int(unitQuantity), grouping=True) + ' ' + unitType + ' at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(moneyNeeded, grouping=True) + '. You have ' + moneyLeft + ' left in your bank.')
+                        moneyLeft = bankAmount - moneyNeeded
+                        msg = ('Purchased ' + locale.format("%d", unitQuantity, grouping=True) + ' ' + unitType + ' at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(int(moneyNeeded), grouping=True) + '. You have ' + locale.currency(int(moneyLeft), grouping=True) + ' left in your bank.')
                         server = smtplib.SMTP('smtp.gmail.com:587')
                         server.starttls()
-                        server.login("username", "password")
-                        server.sendmail("fromaddr", "toaddrs", msg)
+                        server.login(username, password)
+                        server.sendmail(fromaddr, toaddrs, msg)
                         server.quit()
             row += 1  
         skipRow = 1
