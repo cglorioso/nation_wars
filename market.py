@@ -76,8 +76,7 @@ while True:
                         br.select_form(nr=row)
                         br.form['purchaseAmount'] = str(unitQuantity)
                         br.submit()
-                        print "Purchased" , unitQuantity, unitType, "at", unitPrice, "costing", moneyNeeded
-                        moneyLeft = bankAmount - moneyNeeded
+                        print ('Purchased ' + locale.format("%d", unitQuantity, grouping=True) + ' ' + unitType + ' at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(int(moneyNeeded), grouping=True) + '. You have ' + locale.currency(int(moneyLeft), grouping=True) + ' left in your bank.')
                         msg = ('Purchased ' + locale.format("%d", unitQuantity, grouping=True) + ' ' + unitType + ' at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(int(moneyNeeded), grouping=True) + '. You have ' + locale.currency(int(moneyLeft), grouping=True) + ' left in your bank.')
                         server = smtplib.SMTP('smtp.gmail.com:587')
                         server.starttls()
