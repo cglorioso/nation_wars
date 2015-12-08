@@ -51,7 +51,6 @@ while True:
         if cells[0].get_text() == "Ships":
             unitType = cells[0].get_text()
             unitQuantity = int(cells[4].get_text().replace(".",""))
-            unitQuantity = int("100")
             if unitQuantity > 0:
                 unitPrice = int(cells[3].get_text().replace("$","").replace(".",""))
                 moneyNeeded = unitQuantity * unitPrice
