@@ -59,7 +59,7 @@ while True:
                     br.form["market[" + str(row) + "]"] = str(unitQuantity)
                     br.submit()
                     moneyLeft = bankAmount - moneyNeeded
-                    msg = ('Purchased ' + locale.format("%d", unitQuantity, grouping=True) + ' ' + unitType + ' at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(int(moneyNeeded), grouping=True) + '. You have ' + locale.currency(int(moneyLeft), grouping=True) + ' left in your bank.')
+                    msg = ('Purchased ' + locale.format("%d", unitQuantity, grouping=True) + ' ' + unitType + ' for your Nation Army at ' + locale.currency(unitPrice, grouping=True) + ' costing '  + locale.currency(int(moneyNeeded), grouping=True) + '. You have ' + locale.currency(int(moneyLeft), grouping=True) + ' left in your Nation bank.')
                     server = smtplib.SMTP('smtp.gmail.com:587')
                     server.starttls()
                     server.login(username, password)
